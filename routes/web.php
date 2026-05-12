@@ -17,3 +17,15 @@ Route::get('/produk', [ProdukController::class, 'index']);
 Route::get('/transaksi', [TransaksiController::class, 'index']);
 
 Route::get('/laporan', [LaporanController::class, 'index']);
+
+Route::get('/produk/tambah', [ProdukController::class, 'create']);
+
+Route::post('/produk/store', [ProdukController::class, 'store']);
+
+Route::get('/produk/edit/{id}', [ProdukController::class, 'edit']);
+
+Route::post('/produk/update/{id}', [ProdukController::class, 'update']);
+
+Route::get('/produk/hapus/{id}', [ProdukController::class, 'destroy']); 
+
+Route::get('/transaksi/detail/{id}', [TransaksiController::class, 'detail']);

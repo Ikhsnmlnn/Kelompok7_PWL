@@ -13,7 +13,6 @@ class ProdukSeeder extends Seeder
             [
                 'nama_produk' => 'Indomie',
                 'harga' => 3000,
-                'stok' => 100,
                 'kategori_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -21,7 +20,6 @@ class ProdukSeeder extends Seeder
             [
                 'nama_produk' => 'Aqua',
                 'harga' => 5000,
-                'stok' => 50,
                 'kategori_id' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),

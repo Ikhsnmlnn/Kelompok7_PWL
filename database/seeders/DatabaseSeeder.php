@@ -15,5 +15,7 @@ class DatabaseSeeder extends Seeder
             ProdukSeeder::class,
             TransaksiSeeder::class,
         ]);
+
+        $this->call(StokCabangSeeder::class);
     }
 }
