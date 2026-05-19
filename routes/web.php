@@ -29,3 +29,5 @@ Route::post('/produk/update/{id}', [ProdukController::class, 'update']);
 Route::get('/produk/hapus/{id}', [ProdukController::class, 'destroy']); 
 
 Route::get('/transaksi/detail/{id}', [TransaksiController::class, 'detail']);
+
+Route::get('/transaksi/cabang/{id}', [TransaksiController::class, 'cabang']);

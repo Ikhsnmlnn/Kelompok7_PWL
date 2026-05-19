@@ -7,40 +7,55 @@ use Illuminate\Http\Request;
 
 class TransaksiController extends Controller
 {
-    public function index(Request $request)
+    // =========================================
+    // HALAMAN RINGKASAN TRANSAKSI PER CABANG
+    // =========================================
+    public function index()
     {
-        $query = DB::table('transaksi')
+        $transaksi = DB::table('transaksi')
+            ->join('cabang', 'transaksi.cabang_id', '=', 'cabang.id')
+            ->select(
+                'cabang.id',
+                'cabang.nama_cabang',
+                DB::raw('COUNT(transaksi.id) as jumlah_transaksi'),
+                DB::raw('SUM(transaksi.total) as total_pendapatan'),
+                DB::raw('MAX(transaksi.tanggal) as transaksi_terakhir')
+            )
+            ->groupBy('cabang.id', 'cabang.nama_cabang')
+            ->get();
+
+        return view('transaksi', compact('transaksi'));
+    }
+
+
+    // =========================================
+    // HALAMAN TRANSAKSI BERDASARKAN CABANG
+    // =========================================
+    public function cabang($id)
+    {
+        $transaksi = DB::table('transaksi')
             ->join('users', 'transaksi.user_id', '=', 'users.id')
             ->join('cabang', 'transaksi.cabang_id', '=', 'cabang.id')
             ->select(
                 'transaksi.*',
                 'users.name as nama_user',
                 'cabang.nama_cabang'
-            );
+            )
+            ->where('transaksi.cabang_id', $id)
+            ->orderBy('tanggal', 'desc')
+            ->paginate(10);
 
-        // filter cabang
-        if ($request->cabang_id) {
-            $query->where('transaksi.cabang_id', $request->cabang_id);
-        }
+        $cabang = DB::table('cabang')
+            ->where('id', $id)
+            ->first();
 
-        // filter tanggal awal
-        if ($request->tanggal_awal) {
-            $query->whereDate('transaksi.tanggal', '>=', $request->tanggal_awal);
-        }
-
-        // filter tanggal akhir
-        if ($request->tanggal_akhir) {
-            $query->whereDate('transaksi.tanggal', '<=', $request->tanggal_akhir);
-        }
-
-        $transaksi = $query->paginate(10);
-
-        // ambil data cabang untuk dropdown
-        $cabang = DB::table('cabang')->get();
-
-        return view('transaksi', compact('transaksi', 'cabang'));
+        return view('transaksi_cabang', compact('transaksi', 'cabang'));
     }
 
+
+    // =========================================
+    // DETAIL ISI TRANSAKSI
+    // =========================================
     public function detail($id)
     {
         $transaksi = DB::table('transaksi')
