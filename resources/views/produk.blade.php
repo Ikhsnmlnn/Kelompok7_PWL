@@ -1,32 +1,61 @@
 @extends('layouts.app')
 
 @section('content')
-<h1 class="text-2xl font-bold mb-4">Data Produk</h1>
-
 <a href="/produk/tambah"
-   class="bg-blue-500 text-white px-4 py-2 rounded mb-4 inline-block">
-    Tambah Produk
-</a>
+    class="bg-blue-500 text-white px-4 py-2 rounded mb-4 inline-block">
+        Tambah Produk
+    </a>
+<form method="GET" class="mb-4 flex flex-wrap items-center gap-2">
 
-<form method="GET" class="mb-4">
+    {{-- SEARCH --}}
+    <input type="text"
+           name="search"
+           value="{{ request('search') }}"
+           placeholder="Cari produk..."
+           class="border rounded px-3 h-9 text-sm">
 
+
+    {{-- FILTER CABANG --}}
     <select name="cabang_id"
-            class="border p-2 rounded">
+            class="border rounded px-3 h-9 text-sm">
 
         <option value="">Semua Cabang</option>
 
         @foreach($cabang as $c)
+
             <option value="{{ $c->id }}"
                 {{ request('cabang_id') == $c->id ? 'selected' : '' }}>
 
                 {{ $c->nama_cabang }}
 
             </option>
+
         @endforeach
 
     </select>
 
-    <button class="bg-blue-500 text-white px-4 py-2 rounded">
+
+    {{-- FILTER KATEGORI --}}
+    <select name="kategori_id"
+            class="border rounded px-3 h-9 text-sm">
+
+        <option value="">Semua Kategori</option>
+
+        @foreach($kategori as $k)
+
+            <option value="{{ $k->id }}"
+                {{ request('kategori_id') == $k->id ? 'selected' : '' }}>
+
+                {{ $k->nama_kategori }}
+
+            </option>
+
+        @endforeach
+
+    </select>
+
+
+    <button class="bg-blue-500 text-white px-4 h-9 rounded text-sm">
         Filter
     </button>
 
@@ -67,5 +96,8 @@
         @endforeach
     </tbody>
 </table>
+<div class="mt-4">
+    {{ $produk->links() }}
+</div>
 
 @endsection

@@ -10,30 +10,34 @@ class CabangSeeder extends Seeder
     public function run(): void
     {
         DB::table('cabang')->insert([
-
             [
                 'nama_cabang' => 'Cabang Jakarta',
-                'alamat' => 'Jl. Sudirman No. 12'
+                'kode_cabang' => 'JKT',
+                'alamat' => 'Jl. Sudirman'
             ],
 
             [
                 'nama_cabang' => 'Cabang Bandung',
-                'alamat' => 'Jl. Asia Afrika No. 8'
+                'kode_cabang' => 'BDG',
+                'alamat' => 'Jl. Asia Afrika'
             ],
 
             [
                 'nama_cabang' => 'Cabang Surabaya',
-                'alamat' => 'Jl. Pemuda No. 21'
-            ],
-
-            [
-                'nama_cabang' => 'Cabang Yogyakarta',
-                'alamat' => 'Jl. Malioboro No. 5'
+                'kode_cabang' => 'SBY',
+                'alamat' => 'Jl. Pemuda'
             ],
 
             [
                 'nama_cabang' => 'Cabang Medan',
-                'alamat' => 'Jl. Gatot Subroto No. 17'
+                'kode_cabang' => 'MDN',
+                'alamat' => 'Jl. Gatot Subroto'
+            ],
+
+            [
+                'nama_cabang' => 'Cabang Yogyakarta',
+                'kode_cabang' => 'YGY',
+                'alamat' => 'Jl. Malioboro'
             ]
 
         ]);

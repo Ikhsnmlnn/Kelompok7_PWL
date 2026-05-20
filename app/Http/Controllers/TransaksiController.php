@@ -10,10 +10,55 @@ class TransaksiController extends Controller
     // =========================================
     // HALAMAN RINGKASAN TRANSAKSI PER CABANG
     // =========================================
-    public function index()
+    public function index(Request $request)
     {
-        $transaksi = DB::table('transaksi')
-            ->join('cabang', 'transaksi.cabang_id', '=', 'cabang.id')
+        $query = DB::table('transaksi')
+            ->join('cabang', 'transaksi.cabang_id', '=', 'cabang.id');
+
+        // =========================================
+        // FILTER CEPAT
+        // =========================================
+
+        if ($request->filter == 'hari_ini') {
+
+            $query->whereDate('tanggal', today());
+
+        } elseif ($request->filter == '7_hari') {
+
+            $query->whereBetween('tanggal', [
+                now()->subDays(7),
+                now()
+            ]);
+
+        } elseif ($request->filter == 'bulan_ini') {
+
+            $query->whereMonth('tanggal', now()->month)
+                ->whereYear('tanggal', now()->year);
+
+        } elseif ($request->filter == 'tahun_ini') {
+
+            $query->whereYear('tanggal', now()->year);
+        }
+
+
+        // =========================================
+        // FILTER CUSTOM TANGGAL
+        // =========================================
+
+        if ($request->tanggal_awal && $request->tanggal_akhir) {
+
+            $query->whereBetween('tanggal', [
+                $request->tanggal_awal,
+                $request->tanggal_akhir
+            ]);
+        }
+
+
+        // =========================================
+        // RINGKASAN CABANG
+        // =========================================
+
+        $transaksi = $query
             ->select(
                 'cabang.id',
                 'cabang.nama_cabang',
@@ -31,9 +76,9 @@ class TransaksiController extends Controller
     // =========================================
     // HALAMAN TRANSAKSI BERDASARKAN CABANG
     // =========================================
-    public function cabang($id)
+    public function cabang(Request $request, $id)
     {
-        $transaksi = DB::table('transaksi')
+        $query = DB::table('transaksi')
             ->join('users', 'transaksi.user_id', '=', 'users.id')
             ->join('cabang', 'transaksi.cabang_id', '=', 'cabang.id')
             ->select(
@@ -41,9 +86,52 @@ class TransaksiController extends Controller
                 'users.name as nama_user',
                 'cabang.nama_cabang'
             )
-            ->where('transaksi.cabang_id', $id)
+            ->where('transaksi.cabang_id', $id);
+
+
+        // =========================================
+        // FILTER CEPAT
+        // =========================================
+
+        if ($request->filter == 'hari_ini') {
+
+            $query->whereDate('tanggal', today());
+
+        } elseif ($request->filter == '7_hari') {
+
+            $query->whereBetween('tanggal', [
+                now()->subDays(7),
+                now()
+            ]);
+
+        } elseif ($request->filter == 'bulan_ini') {
+
+            $query->whereMonth('tanggal', now()->month)
+                ->whereYear('tanggal', now()->year);
+
+        } elseif ($request->filter == 'tahun_ini') {
+
+            $query->whereYear('tanggal', now()->year);
+        }
+
+
+        // =========================================
+        // FILTER CUSTOM
+        // =========================================
+
+        if ($request->tanggal_awal && $request->tanggal_akhir) {
+
+            $query->whereBetween('tanggal', [
+                $request->tanggal_awal,
+                $request->tanggal_akhir
+            ]);
+        }
+
+
+        $transaksi = $query
             ->orderBy('tanggal', 'desc')
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         $cabang = DB::table('cabang')
             ->where('id', $id)

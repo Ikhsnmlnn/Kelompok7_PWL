@@ -6,6 +6,7 @@
     <title>Admin Panel</title>
     @vite('resources/css/app.css')
 </head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <body class="bg-gray-100">
 
 <div class="flex h-screen">

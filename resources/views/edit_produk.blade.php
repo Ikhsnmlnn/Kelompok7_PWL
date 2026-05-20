@@ -28,15 +28,6 @@
     </div>
 
     <div class="mb-4">
-        <label class="block mb-1">Stok</label>
-
-        <input type="number"
-               name="stok"
-               value="{{ $produk->stok }}"
-               class="w-full border p-2 rounded">
-    </div>
-
-    <div class="mb-4">
         <label class="block mb-1">Kategori</label>
 
         <select name="kategori_id" class="w-full border p-2 rounded">

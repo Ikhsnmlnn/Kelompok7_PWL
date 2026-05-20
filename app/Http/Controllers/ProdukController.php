@@ -19,19 +19,53 @@ class ProdukController extends Controller
                 'produk.nama_produk',
                 'produk.harga',
                 'kategori.nama_kategori',
+                'kategori.id as kategori_id',
                 'cabang.nama_cabang'
             );
 
-        // filter cabang
+
+        // =========================================
+        // FILTER CABANG
+        // =========================================
+
         if ($request->cabang_id) {
             $query->where('stok_cabang.cabang_id', $request->cabang_id);
         }
 
-        $produk = $query->get();
+
+        // =========================================
+        // FILTER KATEGORI
+        // =========================================
+
+        if ($request->kategori_id) {
+            $query->where('produk.kategori_id', $request->kategori_id);
+        }
+
+
+        // =========================================
+        // SEARCH PRODUK
+        // =========================================
+
+        if ($request->search) {
+            $query->where('produk.nama_produk', 'like', '%' . $request->search . '%');
+        }
+
+
+        $produk = $query
+            ->orderBy('produk.nama_produk', 'asc')
+            ->paginate(7)
+            ->withQueryString();
+
 
         $cabang = DB::table('cabang')->get();
 
-        return view('produk', compact('produk', 'cabang'));
+        $kategori = DB::table('kategori')->get();
+
+        return view('produk', compact(
+            'produk',
+            'cabang',
+            'kategori'
+        ));
     }
 
     public function create()
@@ -57,7 +91,6 @@ class ProdukController extends Controller
         DB::table('stok_cabang')->insert([
             'produk_id' => $produkId,
             'cabang_id' => $request->cabang_id,
-            'stok' => $request->stok,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
