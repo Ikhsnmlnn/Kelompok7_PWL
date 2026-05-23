@@ -75,6 +75,7 @@
 <table class="min-w-full bg-white rounded shadow">
     <thead>
         <tr>
+            <th class="p-2">No</th>
             <th class="p-2">Cabang</th>
             <th class="p-2">Jumlah Transaksi</th>
             <th class="p-2">Total Pendapatan</th>
@@ -84,8 +85,12 @@
     </thead>
 
     <tbody>
-        @foreach($transaksi as $t)
+        @foreach($transaksi as $index => $t)
         <tr class="border-t">
+
+            <td class="p-2">
+                {{ $index + 1 }}
+            </td>
 
             <td class="p-2">
                 {{ $t->nama_cabang }}

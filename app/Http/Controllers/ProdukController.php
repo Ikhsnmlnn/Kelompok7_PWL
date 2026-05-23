@@ -29,7 +29,11 @@ class ProdukController extends Controller
         // =========================================
 
         if ($request->cabang_id) {
-            $query->where('stok_cabang.cabang_id', $request->cabang_id);
+
+            $query->where(
+                'stok_cabang.cabang_id',
+                $request->cabang_id
+            );
         }
 
 
@@ -38,7 +42,11 @@ class ProdukController extends Controller
         // =========================================
 
         if ($request->kategori_id) {
-            $query->where('produk.kategori_id', $request->kategori_id);
+
+            $query->where(
+                'produk.kategori_id',
+                $request->kategori_id
+            );
         }
 
 
@@ -47,19 +55,25 @@ class ProdukController extends Controller
         // =========================================
 
         if ($request->search) {
-            $query->where('produk.nama_produk', 'like', '%' . $request->search . '%');
+
+            $query->where(
+                'produk.nama_produk',
+                'like',
+                '%' . $request->search . '%'
+            );
         }
 
 
         $produk = $query
             ->orderBy('produk.nama_produk', 'asc')
-            ->paginate(7)
+            ->paginate(10)
             ->withQueryString();
 
 
         $cabang = DB::table('cabang')->get();
 
         $kategori = DB::table('kategori')->get();
+
 
         return view('produk', compact(
             'produk',
@@ -68,64 +82,167 @@ class ProdukController extends Controller
         ));
     }
 
+
+
+    // =========================================
+    // FORM TAMBAH PRODUK
+    // =========================================
+
     public function create()
     {
         $kategori = DB::table('kategori')->get();
+
         $cabang = DB::table('cabang')->get();
 
-        return view('tambah_produk', compact('kategori', 'cabang'));
+        return view('tambah_produk', compact(
+            'kategori',
+            'cabang'
+        ));
     }
+
+
+
+    // =========================================
+    // SIMPAN PRODUK
+    // =========================================
 
     public function store(Request $request)
     {
-        // simpan produk
+        // =========================================
+        // SIMPAN PRODUK
+        // =========================================
+
         $produkId = DB::table('produk')->insertGetId([
+
             'nama_produk' => $request->nama_produk,
+
             'harga' => $request->harga,
+
             'kategori_id' => $request->kategori_id,
+
             'created_at' => now(),
+
             'updated_at' => now(),
         ]);
 
-        // simpan stok cabang
-        DB::table('stok_cabang')->insert([
-            'produk_id' => $produkId,
-            'cabang_id' => $request->cabang_id,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+
+        // =========================================
+        // SIMPAN STOK CABANG
+        // =========================================
+
+        foreach ($request->stok as $cabangId => $stok) {
+
+            DB::table('stok_cabang')->insert([
+
+                'produk_id' => $produkId,
+
+                'cabang_id' => $cabangId,
+
+                'stok' => $stok,
+
+                'created_at' => now(),
+
+                'updated_at' => now(),
+            ]);
+        }
+
 
         return redirect('/produk');
     }
+
+
+
+    // =========================================
+    // FORM EDIT PRODUK
+    // =========================================
 
     public function edit($id)
     {
-        $produk = DB::table('produk')->find($id);
+        $data = DB::table('stok_cabang')
+            ->join('produk', 'stok_cabang.produk_id', '=', 'produk.id')
+            ->join('cabang', 'stok_cabang.cabang_id', '=', 'cabang.id')
+            ->select(
+                'stok_cabang.id as stok_id',
+                'stok_cabang.stok',
+                'produk.id as produk_id',
+                'produk.nama_produk',
+                'produk.harga',
+                'produk.kategori_id',
+                'cabang.nama_cabang'
+            )
+            ->where('stok_cabang.id', $id)
+            ->first();
+
         $kategori = DB::table('kategori')->get();
 
-        return view('edit_produk', compact('produk', 'kategori'));
+        return view('edit_produk', compact(
+            'data',
+            'kategori'
+        ));
     }
+
+
+
+    // =========================================
+    // UPDATE PRODUK
+    // =========================================
 
     public function update(Request $request, $id)
     {
-        DB::table('produk')
+        // ambil data stok cabang
+        $stokCabang = DB::table('stok_cabang')
             ->where('id', $id)
+            ->first();
+
+
+        // update produk
+        DB::table('produk')
+            ->where('id', $stokCabang->produk_id)
             ->update([
+
                 'nama_produk' => $request->nama_produk,
+
                 'harga' => $request->harga,
-                'stok' => $request->stok,
+
                 'kategori_id' => $request->kategori_id,
+
                 'updated_at' => now(),
             ]);
+
+
+        // update stok cabang
+        DB::table('stok_cabang')
+            ->where('id', $id)
+            ->update([
+
+                'stok' => $request->stok,
+
+                'updated_at' => now(),
+            ]);
+
 
         return redirect('/produk');
     }
 
+
+
+    // =========================================
+    // HAPUS PRODUK
+    // =========================================
+
     public function destroy($id)
     {
+        // hapus stok cabang dulu
+        DB::table('stok_cabang')
+            ->where('produk_id', $id)
+            ->delete();
+
+
+        // hapus produk
         DB::table('produk')
             ->where('id', $id)
             ->delete();
+
 
         return redirect('/produk');
     }

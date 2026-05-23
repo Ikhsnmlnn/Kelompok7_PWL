@@ -1,5 +1,3 @@
-(views/layouts/app.blade.php)
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,13 +13,13 @@
     @include('layouts.sidebar')
 
     <!-- Main -->
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col ml-64">
 
         <!-- Navbar -->
         @include('layouts.navbar')
 
         <!-- Content -->
-        <div class="p-6 flex-1">
+        <div class="p-6 flex-1 overflow-y-auto">
             @yield('content')
         </div>
 
