@@ -22,6 +22,17 @@
     {{ $title }}
 </h1>
 
-    <span>Admin</span>
+    <div class="flex items-center gap-4">
+
+        <span class="font-semibold">
+            {{ ucfirst(auth()->user()->role) }}
+        </span>
+
+        <a href="/logout"
+        class="bg-red-500 text-white px-3 py-1 rounded text-sm">
+            Logout
+        </a>
+
+    </div>
 
 </div>

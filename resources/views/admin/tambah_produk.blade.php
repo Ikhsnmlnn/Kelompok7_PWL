@@ -48,9 +48,17 @@
         </select>
     </div>
 
-    <button class="bg-blue-500 text-white px-4 py-2 rounded">
-        Simpan
-    </button>
+    <div class="flex gap-2">
+        <button class="bg-blue-500 text-white px-4 py-2 rounded">
+            Simpan
+        </button>
+
+        <a href="/produk"
+        class="bg-gray-500 text-white px-4 py-2 rounded">
+            Batal
+        </a>
+
+    </div>
 </form>
 
 @endsection

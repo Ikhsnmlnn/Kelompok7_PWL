@@ -7,8 +7,45 @@ use Illuminate\Http\Request;
 
 class ProdukController extends Controller
 {
+    // =========================================
+    // LIST PRODUK
+    // =========================================
+
     public function index(Request $request)
     {
+
+    // =========================================
+    // SESSION FILTER
+    // =========================================
+
+    if ($request->hasAny([
+        'search',
+        'cabang_id',
+        'kategori_id'
+    ])) {
+
+        session([
+
+            'produk_filter' => [
+
+                'search' => $request->search,
+
+                'cabang_id' => $request->cabang_id,
+
+                'kategori_id' => $request->kategori_id,
+            ]
+        ]);
+
+    } else {
+
+        $filter = session('produk_filter');
+
+        if ($filter) {
+
+            return redirect()->to('/produk?' . http_build_query($filter));
+        }
+    }
+
         $query = DB::table('stok_cabang')
             ->join('produk', 'stok_cabang.produk_id', '=', 'produk.id')
             ->join('cabang', 'stok_cabang.cabang_id', '=', 'cabang.id')
@@ -75,7 +112,7 @@ class ProdukController extends Controller
         $kategori = DB::table('kategori')->get();
 
 
-        return view('produk', compact(
+        return view('admin.produk', compact(
             'produk',
             'cabang',
             'kategori'
@@ -94,7 +131,7 @@ class ProdukController extends Controller
 
         $cabang = DB::table('cabang')->get();
 
-        return view('tambah_produk', compact(
+        return view('admin.tambah_produk', compact(
             'kategori',
             'cabang'
         ));
@@ -175,7 +212,7 @@ class ProdukController extends Controller
 
         $kategori = DB::table('kategori')->get();
 
-        return view('edit_produk', compact(
+        return view('admin.edit_produk', compact(
             'data',
             'kategori'
         ));
@@ -189,13 +226,19 @@ class ProdukController extends Controller
 
     public function update(Request $request, $id)
     {
-        // ambil data stok cabang
+        // =========================================
+        // AMBIL DATA STOK CABANG
+        // =========================================
+
         $stokCabang = DB::table('stok_cabang')
             ->where('id', $id)
             ->first();
 
 
-        // update produk
+        // =========================================
+        // UPDATE PRODUK
+        // =========================================
+
         DB::table('produk')
             ->where('id', $stokCabang->produk_id)
             ->update([
@@ -210,7 +253,10 @@ class ProdukController extends Controller
             ]);
 
 
-        // update stok cabang
+        // =========================================
+        // UPDATE STOK CABANG
+        // =========================================
+
         DB::table('stok_cabang')
             ->where('id', $id)
             ->update([
@@ -232,13 +278,19 @@ class ProdukController extends Controller
 
     public function destroy($id)
     {
-        // hapus stok cabang dulu
+        // =========================================
+        // HAPUS STOK CABANG
+        // =========================================
+
         DB::table('stok_cabang')
             ->where('produk_id', $id)
             ->delete();
 
 
-        // hapus produk
+        // =========================================
+        // HAPUS PRODUK
+        // =========================================
+
         DB::table('produk')
             ->where('id', $id)
             ->delete();

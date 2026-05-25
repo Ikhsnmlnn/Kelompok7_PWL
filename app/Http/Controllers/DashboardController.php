@@ -66,7 +66,7 @@ class DashboardController extends Controller
             ->get();
 
 
-        return view('dashboard', compact(
+        return view('admin.dashboard', compact(
             'omzetBulanIni',
             'transaksiBulanIni',
             'performaCabang',

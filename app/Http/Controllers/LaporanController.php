@@ -9,6 +9,41 @@ class LaporanController extends Controller
 {
     public function index(Request $request)
     {
+
+    // =========================================
+    // SESSION FILTER
+    // =========================================
+
+    if ($request->hasAny([
+        'filter',
+        'tanggal_mulai',
+        'tanggal_selesai'
+    ])) {
+
+        session([
+
+            'laporan_filter' => [
+
+                'filter' => $request->filter,
+
+                'tanggal_mulai' => $request->tanggal_mulai,
+
+                'tanggal_selesai' => $request->tanggal_selesai,
+            ]
+        ]);
+
+    } else {
+
+        $filter = session('laporan_filter');
+
+        if ($filter) {
+
+            return redirect()->to(
+                '/laporan?' . http_build_query($filter)
+            );
+        }
+    }
+
         // =========================================
         // FILTER WAKTU
         // =========================================
@@ -23,8 +58,11 @@ class LaporanController extends Controller
         $query = DB::table('transaksi')
             ->join('cabang', 'transaksi.cabang_id', '=', 'cabang.id')
             ->select(
+
                 'cabang.nama_cabang',
+
                 DB::raw('COUNT(transaksi.id) as jumlah_transaksi'),
+
                 DB::raw('SUM(transaksi.total) as total_omzet')
             );
 
@@ -87,7 +125,7 @@ class LaporanController extends Controller
         $totalTransaksi = $laporan->sum('jumlah_transaksi');
 
 
-        return view('laporan', compact(
+        return view('admin.laporan', compact(
             'laporan',
             'totalOmzet',
             'totalTransaksi'

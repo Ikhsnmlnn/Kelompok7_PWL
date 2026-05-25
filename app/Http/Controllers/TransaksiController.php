@@ -10,10 +10,47 @@ class TransaksiController extends Controller
     // =========================================
     // HALAMAN RINGKASAN TRANSAKSI PER CABANG
     // =========================================
+
     public function index(Request $request)
     {
+
+    // =========================================
+    // SESSION FILTER
+    // =========================================
+
+    if ($request->hasAny([
+        'filter',
+        'tanggal_awal',
+        'tanggal_akhir'
+    ])) {
+
+        session([
+
+            'transaksi_filter' => [
+
+                'filter' => $request->filter,
+
+                'tanggal_awal' => $request->tanggal_awal,
+
+                'tanggal_akhir' => $request->tanggal_akhir,
+            ]
+        ]);
+
+    } else {
+
+        $filter = session('transaksi_filter');
+
+        if ($filter) {
+
+            return redirect()->to(
+                '/transaksi?' . http_build_query($filter)
+            );
+        }
+    }
+
         $query = DB::table('transaksi')
             ->join('cabang', 'transaksi.cabang_id', '=', 'cabang.id');
+
 
         // =========================================
         // FILTER CEPAT
@@ -33,7 +70,7 @@ class TransaksiController extends Controller
         } elseif ($request->filter == 'bulan_ini') {
 
             $query->whereMonth('tanggal', now()->month)
-                ->whereYear('tanggal', now()->year);
+                  ->whereYear('tanggal', now()->year);
 
         } elseif ($request->filter == 'tahun_ini') {
 
@@ -62,20 +99,31 @@ class TransaksiController extends Controller
             ->select(
                 'cabang.id',
                 'cabang.nama_cabang',
+
                 DB::raw('COUNT(transaksi.id) as jumlah_transaksi'),
+
                 DB::raw('SUM(transaksi.total) as total_pendapatan'),
+
                 DB::raw('MAX(transaksi.tanggal) as transaksi_terakhir')
             )
-            ->groupBy('cabang.id', 'cabang.nama_cabang')
+            ->groupBy(
+                'cabang.id',
+                'cabang.nama_cabang'
+            )
             ->get();
 
-        return view('transaksi', compact('transaksi'));
+
+        return view('admin.transaksi', compact(
+            'transaksi'
+        ));
     }
+
 
 
     // =========================================
     // HALAMAN TRANSAKSI BERDASARKAN CABANG
     // =========================================
+
     public function cabang(Request $request, $id)
     {
         $query = DB::table('transaksi')
@@ -83,7 +131,9 @@ class TransaksiController extends Controller
             ->join('cabang', 'transaksi.cabang_id', '=', 'cabang.id')
             ->select(
                 'transaksi.*',
+
                 'users.name as nama_user',
+
                 'cabang.nama_cabang'
             )
             ->where('transaksi.cabang_id', $id);
@@ -107,7 +157,7 @@ class TransaksiController extends Controller
         } elseif ($request->filter == 'bulan_ini') {
 
             $query->whereMonth('tanggal', now()->month)
-                ->whereYear('tanggal', now()->year);
+                  ->whereYear('tanggal', now()->year);
 
         } elseif ($request->filter == 'tahun_ini') {
 
@@ -133,17 +183,24 @@ class TransaksiController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+
         $cabang = DB::table('cabang')
             ->where('id', $id)
             ->first();
 
-        return view('transaksi_cabang', compact('transaksi', 'cabang'));
+
+        return view('admin.transaksi_cabang', compact(
+            'transaksi',
+            'cabang'
+        ));
     }
+
 
 
     // =========================================
     // DETAIL ISI TRANSAKSI
     // =========================================
+
     public function detail($id)
     {
         $transaksi = DB::table('transaksi')
@@ -151,21 +208,29 @@ class TransaksiController extends Controller
             ->join('cabang', 'transaksi.cabang_id', '=', 'cabang.id')
             ->select(
                 'transaksi.*',
+
                 'users.name as nama_user',
+
                 'cabang.nama_cabang'
             )
             ->where('transaksi.id', $id)
             ->first();
 
+
         $detail = DB::table('detail_transaksi')
             ->join('produk', 'detail_transaksi.produk_id', '=', 'produk.id')
             ->select(
                 'detail_transaksi.*',
+
                 'produk.nama_produk'
             )
             ->where('transaksi_id', $id)
             ->get();
 
-        return view('detail_transaksi', compact('transaksi', 'detail'));
+
+        return view('admin.detail_transaksi', compact(
+            'transaksi',
+            'detail'
+        ));
     }
 }
