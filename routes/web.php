@@ -41,13 +41,30 @@ Route::middleware(['auth', 'role:manager'])->group(function () {
 
 });
 
+// ======================================
 // SUPERVISOR
+// ======================================
+
 Route::middleware(['auth', 'role:supervisor'])->group(function () {
+
     Route::get('/supervisor', function () {
         return view('supervisor.dashboard');
     });
 
+    Route::get('/supervisor/monitoring-transaksi', function () {
+        return view('supervisor.monitoring_transaksi');
+    });
+
+    Route::get('/supervisor/kasir', function () {
+        return view('supervisor.kasir');
+    });
+
+    Route::get('/supervisor/laporan-transaksi', function () {
+        return view('supervisor.laporan_transaksi');
+    });
+
 });
+
 // KASIR
 Route::middleware(['auth', 'role:kasir'])->group(function () {
     Route::get('/kasir', function () {
@@ -56,11 +73,35 @@ Route::middleware(['auth', 'role:kasir'])->group(function () {
 
 });
 
+// ======================================
 // GUDANG
+// ======================================
+
 Route::middleware(['auth', 'role:gudang'])->group(function () {
+
+    // Dashboard
     Route::get('/gudang', function () {
         return view('gudang.dashboard');
-
     });
-    
+
+    // Stok Barang
+    Route::get('/gudang/stok', function () {
+        return view('gudang.stok');
+    });
+
+    // Barang Masuk
+    Route::get('/gudang/barang-masuk', function () {
+        return view('gudang.barang_masuk');
+    });
+
+    // Barang Keluar
+    Route::get('/gudang/barang-keluar', function () {
+        return view('gudang.barang_keluar');
+    });
+
+    //Riwayat Stok
+    Route::get('/gudang/riwayat-stok', function () {
+    return view('gudang.riwayat_stok');
+    });
+
 });
