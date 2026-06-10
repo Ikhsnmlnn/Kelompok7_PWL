@@ -16,7 +16,7 @@
         @if($role == 'admin')
 
             <a href="/dashboard"
-               class="block px-4 py-2 rounded-lg {{ re  quest()->is('dashboard') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
+               class="block px-4 py-2 rounded-lg {{ request()->is('dashboard') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
                 Dashboard
             </a>
 
@@ -41,8 +41,27 @@
         @if($role == 'manager')
 
             <a href="/manager"
-               class="block px-4 py-2 rounded-lg {{ request()->is('manager*') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
+            class="block px-4 py-2 rounded-lg
+            {{ request()->is('manager') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
                 Dashboard
+            </a>
+
+            <a href="/manager/transaksi"
+            class="block px-4 py-2 rounded-lg
+            {{ request()->is('manager/transaksi*') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
+                Monitoring Transaksi
+            </a>
+
+            <a href="/manager/stok"
+            class="block px-4 py-2 rounded-lg
+            {{ request()->is('manager/stok*') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
+                Monitoring Stok
+            </a>
+
+            <a href="/manager/laporan"
+            class="block px-4 py-2 rounded-lg
+            {{ request()->is('manager/laporan*') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
+                Laporan Cabang
             </a>
 
         @endif
@@ -78,10 +97,21 @@
         {{-- KASIR --}}
         @if($role == 'kasir')
 
-            <a href="/kasir"
-               class="block px-4 py-2 rounded-lg {{ request()->is('kasir*') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
+           <a href="/kasir"
+            class="block px-4 py-2 rounded-lg {{ request()->is('kasir') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
                 Dashboard
             </a>
+
+            <a href="/kasir/transaksi"
+            class="block px-4 py-2 rounded-lg {{ request()->is('kasir/transaksi*') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
+                Transaksi
+            </a>
+
+            <a href="/kasir/riwayat"
+            class="block px-4 py-2 rounded-lg {{ request()->is('kasir/riwayat*') ? 'bg-gray-800 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
+                Riwayat Transaksi
+            </a>
+
 
         @endif
 
