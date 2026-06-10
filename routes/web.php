@@ -7,6 +7,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\KasirController;
+use App\Http\Controllers\ManagerController;
 
 // LOGIN
 Route::get('/', [AuthController::class, 'login'])
@@ -35,9 +37,22 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 // MANAGER
 Route::middleware(['auth', 'role:manager'])->group(function () {
-    Route::get('/manager', function () {
+     Route::get('/manager', function () {
         return view('manager.dashboard');
     });
+
+    Route::get('/manager/transaksi', [ManagerController::class, 'transaksi']);
+
+
+    Route::get('/manager/stok', [ManagerController::class, 'stok']);
+
+    Route::get('/manager/laporan', function () {
+        return view('manager.laporan');
+    });
+
+     Route::get('/manager/laporan', [ManagerController::class, 'laporan']);
+
+     Route::get('/manager/laporan/pdf', [ManagerController::class, 'cetakLaporan']);
 
 });
 
@@ -66,10 +81,21 @@ Route::middleware(['auth', 'role:supervisor'])->group(function () {
 });
 
 // KASIR
-Route::middleware(['auth', 'role:kasir'])->group(function () {
-    Route::get('/kasir', function () {
-        return view('kasir.dashboard');
-    });
+Route::middleware(['auth','role:kasir'])->group(function () {
+
+    Route::get('/kasir', [KasirController::class,'dashboard']);
+
+    Route::get('/kasir/transaksi', [KasirController::class,'transaksi']);
+
+    Route::post('/kasir/transaksi/store', [KasirController::class,'store']);
+
+    Route::get('/kasir/riwayat', [KasirController::class,'riwayat']);
+
+    Route::get('/kasir/detail/{id}', [KasirController::class,'detail']);
+
+    Route::get('/kasir/transaksi-baru', [KasirController::class, 'transaksiBaru']);
+
+    Route::post('/kasir/pembayaran', [KasirController::class,'pembayaran']);
 
 });
 
